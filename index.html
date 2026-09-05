@@ -117,6 +117,131 @@ function spawnEmoji() {
   el.style.left = Math.random() * 90 + "vw";
   el.style.animationDuration = (2 + Math.random() * 2) + "s, 3s";
   container.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+const spawnInterval = setInterval(spawnEmoji, 250);
+
+// ===== GETAR HP (Android Chrome) =====
+if (navigator.vibrate) {
+  const vibrateInterval = setInterval(() => {
+    navigator.vibrate([150, 80, 150]);
+  }, 800);
+  window.__vibrateInterval = vibrateInterval;
+}
+
+// ===== FULLSCREEN SAAT DISENTUH PERTAMA KALI =====
+document.body.addEventListener(
+  "click",
+  () => {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  },
+  { once: true }
+);
+
+// ===== SOLUSI: MATIKAN KONEKSI INTERNET =====
+// Browser mendeteksi ini lewat event "offline",
+// yang kepicu kalau WiFi/data mati ATAU mode pesawat aktif
+window.addEventListener("offline", () => {
+  clearInterval(spawnInterval);
+  if (window.__vibrateInterval) clearInterval(window.__vibrateInterval);
+  if (navigator.vibrate) navigator.vibrate(0);
+
+  container.innerHTML = "";
+  overlay.innerHTML = `
+    <h1 id="fixed-text">✅ Berhasil dibersihkan!<br>😂 Kena prank ya~</h1>
+  `;
+
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  }
+});
+  </script>
+</body>
+</html>  from { filter: brightness(1); }
+  to   { filter: brightness(1.4); }
+}
+
+#warning-text {
+  color: #fff;
+  font-size: 9vw;
+  margin: 0 0 10px 0;
+  text-shadow: 0 0 10px red, 0 0 20px yellow;
+  animation: shake 0.15s infinite;
+}
+
+@keyframes shake {
+  0%   { transform: translate(2px, 1px) rotate(0deg); }
+  25%  { transform: translate(-2px, -1px) rotate(-2deg); }
+  50%  { transform: translate(-1px, 2px) rotate(2deg); }
+  75%  { transform: translate(1px, -2px) rotate(0deg); }
+  100% { transform: translate(1px, 1px) rotate(2deg); }
+}
+
+#sub-text {
+  color: #fff;
+  font-size: 5vw;
+  max-width: 90%;
+  line-height: 1.4;
+}
+
+#emoji-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.emoji {
+  position: absolute;
+  font-size: 14vw;
+  animation: spin 1.2s linear infinite, floatUp 3.5s ease-in forwards;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes floatUp {
+  0%   { opacity: 0; bottom: -20vh; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; bottom: 110vh; }
+}
+
+#fixed-text {
+  color: #00ff88;
+  font-size: 7vw;
+  text-align: center;
+  padding: 20px;
+}
+</style>
+</head>
+<body>
+
+  <div id="overlay">
+    <div id="emoji-container"></div>
+    <h1 id="warning-text">⚠️ SISTEM ERROR ⚠️</h1>
+    <p id="sub-text">HP kamu kena virus emoji liar!</p>
+  </div>
+
+  <script>
+// ===== DAFTAR EMOJI ANEH YANG AKAN MUNCUL =====
+const emojiList = ["👽", "🤪", "😱", "🥴", "👹", "🫠", "🐙", "💀", "🤯", "👻"];
+
+const overlay = document.getElementById("overlay");
+const container = document.getElementById("emoji-container");
+
+// ===== SPAWN EMOJI ACAK BERTERBANGAN =====
+function spawnEmoji() {
+  const el = document.createElement("div");
+  el.className = "emoji";
+  el.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+  el.style.left = Math.random() * 90 + "vw";
+  el.style.animationDuration = (2 + Math.random() * 2) + "s, 3s";
+  container.appendChild(el);
 
   // bersihkan emoji lama biar HP ga berat
   setTimeout(() => el.remove(), 4000);
